@@ -22,6 +22,8 @@ def generate_lessons(
         topic_description: Additional context for the lessons
         num_lessons: Number of lessons to generate
         existing_lessons: Previously generated lessons to build upon
+        source_text: Information to base lessons upon
+        strict_source_text_adherence: If source text should be the sole source of information
 
     Returns:
         List of dictionaries containing lesson names and content
