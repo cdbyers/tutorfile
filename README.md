@@ -18,7 +18,7 @@ lessons = generate_lessons(
     model="gpt-4o",
     topic="Regular Expressions",
     topic_description="""
-    Lessons on regular expressions using Python's re module and interactivity through ipython
+    Lessons on regular expressions using Python's re module and interactivity through IPython
     """,
     num_lessons=10
 )
@@ -27,6 +27,7 @@ write_lessons_to_folder(lessons, "regex")
 ```
 
 ![XKCD Comic about Regular Expressions](https://imgs.xkcd.com/comics/regular_expressions.png)
+
 *From [XKCD](https://xkcd.com/208/), also you after regextutor*
 
 ## Using Source Material
@@ -43,15 +44,20 @@ lessons = generate_lessons(
     topic="Topic",
     topic_description="Description",
     source_text=source_text,
-    strict_source_text_adherence=True #Defaults to False, True means the LLM will be asked to exclusively use the value in source_text to inform lessons. Outputs might become strange if the source material is not related or sufficient for the lessons to generate.
+    strict_source_text_adherence=True 
 )
 ```
+Extensive source material can cause the prompt for the LLM to exceed the available context, leading to potential errors. 
+
+The strict_source_text_adherence argument defaults to False. True means the LLM will be asked to exclusively use the text from source_text to inform lessons.
 
 ## Building on Existing Lessons
 
 Load existing lessons and generate more:
 
 ```python
+from tutorfile import read_lessons_from_folder, generate_lessons, write_lessons_to_folder
+
 # Read existing lessons
 existing_lessons = read_lessons_from_folder("regextutor")
 
@@ -59,31 +65,18 @@ existing_lessons = read_lessons_from_folder("regextutor")
 new_lessons = generate_lessons(
     client=client,
     model="gpt-4o",
-    topic="Topic",
+    topic="Regular Expressions",
     topic_description="Advanced concepts",
     num_lessons=15,  # Will generate lessons 11-15
     existing_lessons=existing_lessons
 )
 
 # Write all lessons to folder
-write_lessons_to_folder(new_lessons, "topic")
+write_lessons_to_folder(new_lessons, "regex")
 ```
-
-## Features
-
-- Interactive, hands-on learning approach
-- Progressive concept building
-- Source material integration
-- Expandable lesson series
-- Clear exercise structure
-- Built-in progress validation
-
 ## Installation
 
 ```bash
 pip install tutorfile
 ```
 
-## License
-
-MIT

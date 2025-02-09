@@ -104,9 +104,13 @@ Remember to:
         if source_text:
             prompt += f"\n\nCopied below is source text the user provided to base the lessons on.\n{source_text}"
 
-        if strict_source
-        if strict_source_text_adherence:
-            prompt += "\nPlease use the user-provided source text exclusively to generate the lessons. All facts and topics should come from this source text. If there is not enough content in the text or it was not provided, please let the user know in the lesson, along with the topic you think would make sense for the current lesson and possible freely-available sources, like Wikipedia."
+            if strict_source_text_adherence:
+                prompt += "\nPlease use the user-provided source text exclusively to generate the lessons. All facts and topics should come from this source text. If there is not enough content in the text for sufficiently new lessons or source text was not provided, please let the user know in the lesson, along with the topic you think would make sense for the current lesson and possible freely-available sources, like Wikipedia. Again, do not under any circumstances add facts or lessons not contained in the provided text."
+
+        elif strict_source_text_adherence:
+            raise Exception(
+                "strict_source_text_adherence was set to True, but no source_text was provided. Please set strict_source_text_adherence to False or add source_text with content to use for the lessons."
+            )
 
         response = client.chat.completions.create(
             model=model,
