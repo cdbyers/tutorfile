@@ -1,9 +1,34 @@
 import os
+from typing import Any
+
+import anthropic
 import openai
 
 
+def _call_model(client: Any, model: str, system: str, user: str) -> str:
+    if isinstance(client, openai.OpenAI):
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        )
+        return response.choices[0].message.content
+    elif isinstance(client, anthropic.Anthropic):
+        response = client.messages.create(
+            model=model,
+            max_tokens=4096,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+        )
+        return response.content[0].text
+    else:
+        raise TypeError(f"Unsupported client type: {type(client)}")
+
+
 def generate_lessons(
-    client: openai.OpenAI,
+    client: Any,
     model: str,
     topic: str,
     topic_description: str = "",
@@ -16,7 +41,7 @@ def generate_lessons(
     Generate a series of interactive tutorial lessons using AI.
 
     Args:
-        client: OpenAI client instance
+        client: OpenAI or Anthropic client instance
         model: Name of the model to use
         topic: Main subject of the tutorials
         topic_description: Additional context for the lessons
@@ -114,15 +139,9 @@ Remember to:
                 "strict_source_text_adherence was set to True, but no source_text was provided. Please set strict_source_text_adherence to False or add source_text with content to use for the lessons."
             )
 
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": f"Please write lesson {lesson_num}"},
-            ],
+        lesson_content = _call_model(
+            client, model, prompt, f"Please write lesson {lesson_num}"
         )
-
-        lesson_content = response.choices[0].message.content
 
         lessons.append(
             {"name": f"Lesson {lesson_num}: {topic}", "content": lesson_content}
