@@ -1,12 +1,8 @@
 import os
 from typing import Any
 
+import anthropic
 import openai
-
-try:
-    import anthropic as _anthropic
-except ImportError:
-    _anthropic = None
 
 
 def _call_model(client: Any, model: str, system: str, user: str) -> str:
@@ -19,7 +15,7 @@ def _call_model(client: Any, model: str, system: str, user: str) -> str:
             ],
         )
         return response.choices[0].message.content
-    elif _anthropic and isinstance(client, _anthropic.Anthropic):
+    elif isinstance(client, anthropic.Anthropic):
         response = client.messages.create(
             model=model,
             max_tokens=4096,
